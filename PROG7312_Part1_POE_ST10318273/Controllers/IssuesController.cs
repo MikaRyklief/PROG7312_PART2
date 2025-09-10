@@ -8,11 +8,6 @@ using System.Threading.Tasks;
 
 namespace PROG7312_Part1_POE_ST10318273.Controllers
 {
-    /// <summary>
-    /// Controller responsible for handling municipal issue reporting functionality.
-    /// This controller manages the creation, validation, and storage of issue reports
-    /// submitted by citizens, including file uploads and engagement tracking.
-    /// </summary>
     public class IssuesController : Controller
     {
         // Repository for data access operations using linked list implementation
@@ -21,30 +16,19 @@ namespace PROG7312_Part1_POE_ST10318273.Controllers
         // Web hosting environment for file upload handling
         private readonly IWebHostEnvironment _env;
 
-        /// <summary>
-        /// Initializes a new instance of the IssuesController.
-        /// </summary>
-        /// <param name="repo">The issue repository for data operations</param>
-        /// <param name="env">The web hosting environment for file operations</param>
         public IssuesController(IIssueRepository repo, IWebHostEnvironment env)
         {
             _repo = repo;
             _env = env;
         }
 
-        /// <summary>
-        /// Displays the issue reporting form with current engagement data.
-        /// This GET action prepares the view with available categories, recent messages,
-        /// and current submission count for the progress bar.
-        /// </summary>
-        /// <returns>Report view with form and engagement data</returns>
         [HttpGet]
         public async Task<IActionResult> Report()
         {
             // Define available issue categories for the dropdown
             ViewData["Categories"] = new[] { "Sanitation", "Roads", "Utilities", "Other" };
             
-            // Get recent engagement messages from the queue (if repository supports it)
+            // Get recent engagement messages from the queue
             ViewData["RecentMessages"] = (_repo as LinkedListIssueRepository)?.RecentEngagementMessages;
             
             // Get current submission count for progress bar calculation
@@ -54,19 +38,10 @@ namespace PROG7312_Part1_POE_ST10318273.Controllers
             return View();
         }
 
-        /// <summary>
-        /// Processes the submitted issue report form.
-        /// This POST action validates the form data, handles file uploads,
-        /// saves the issue to the repository, and updates engagement tracking.
-        /// </summary>
-        /// <param name="model">The issue model containing form data</param>
-        /// <returns>Redirect to Report view with success/error message</returns>
-        [HttpPost]
         [ValidateAntiForgeryToken] // Prevents CSRF attacks
         public async Task<IActionResult> Report(Issue model)
         {
             // Explicit server-side validation to ensure required fields are provided
-            // This approach avoids nullable reference type issues with ModelState
             if (string.IsNullOrWhiteSpace(model.Location) ||
                 string.IsNullOrWhiteSpace(model.Category) ||
                 string.IsNullOrWhiteSpace(model.Description))
@@ -100,7 +75,7 @@ namespace PROG7312_Part1_POE_ST10318273.Controllers
                 model.AttachmentPath = $"/uploads/{uniqueName}";
             }
 
-            // Award engagement points for gamification (simple scoring system)
+            // Award engagement points for gamification 
             model.EngagementPointsAwarded = 10;
 
             // Add issue to linked list repository
@@ -110,7 +85,7 @@ namespace PROG7312_Part1_POE_ST10318273.Controllers
             await _repo.SaveToDiskAsync();
 
             // Set success message for user feedback
-            TempData["Success"] = "Issue submitted successfully — thank you for participating!";
+            TempData["Success"] = "Issue submitted successfully, thank you for participating!";
             
             // Redirect to prevent duplicate submissions on refresh
             return RedirectToAction(nameof(Report));
