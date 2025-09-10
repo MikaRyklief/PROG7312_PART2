@@ -1,8 +1,80 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    // Set the page title for the browser tab and layout
+    ViewData["Title"] = "Municipal Services";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Main container with responsive margin -->
+<div class="container my-4">
+    <!-- Hero section with gradient background and call-to-action -->
+    <div class="hero">
+        <div class="row align-items-center">
+            <!-- Left column with main content and action buttons -->
+            <div class="col-md-8">
+                <!-- Main heading for the landing page -->
+                <h1 class="mb-3">Welcome to Municipal Services</h1>
+                
+                <!-- Lead paragraph describing the application's purpose -->
+                <p class="lead mb-4">Access key services quickly: report issues, track requests, and find helpful information.</p>
+                
+                <!-- Primary call-to-action button for issue reporting -->
+                <a class="btn btn-light me-2" href="/Issues/Report">Report an Issue</a>
+                
+                <!-- Secondary button to scroll to services section -->
+                <a class="btn btn-outline-light" href="#services">Explore services</a>
+            </div>
+            
+            <!-- Right column with logo (hidden on mobile, shown on medium+ screens) -->
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <!-- Government logo with responsive sizing -->
+                <img src="~/logo.svg" alt="Western Cape Government" style="height:64px;width:auto;" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Services section with feature cards -->
+    <section id="services" class="mt-4">
+        <div class="row g-3">
+            <!-- Issue Reporting Service Card -->
+            <div class="col-md-4">
+                <div class="p-3 feature-card h-100">
+                    <!-- Service title -->
+                    <h5 class="mb-2">Report Issues</h5>
+                    
+                    <!-- Service description -->
+                    <p class="mb-3">Log municipal issues like water leaks, potholes, or power faults.</p>
+                    
+                    <!-- Action button linking to issue reporting form -->
+                    <a class="btn btn-primary" href="/Issues/Report">Start report</a>
+                </div>
+            </div>
+            
+            <!-- Local Events Service Card (Coming Soon) -->
+            <div class="col-md-4">
+                <div class="p-3 feature-card h-100">
+                    <!-- Service title -->
+                    <h5 class="mb-2">Local Events</h5>
+                    
+                    <!-- Service description -->
+                    <p class="mb-3">Stay informed about community events and announcements.</p>
+                    
+                    <!-- Disabled button indicating future feature -->
+                    <button class="btn btn-outline-primary" disabled>Coming soon</button>
+                </div>
+            </div>
+            
+            <!-- Request Status Service Card (Coming Soon) -->
+            <div class="col-md-4">
+                <div class="p-3 feature-card h-100">
+                    <!-- Service title -->
+                    <h5 class="mb-2">Request Status</h5>
+                    
+                    <!-- Service description -->
+                    <p class="mb-3">Track the progress of your submitted service requests.</p>
+                    
+                    <!-- Disabled button indicating future feature -->
+                    <button class="btn btn-outline-primary" disabled>Coming soon</button>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>

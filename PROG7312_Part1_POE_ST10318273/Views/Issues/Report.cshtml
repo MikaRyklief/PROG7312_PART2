@@ -1,0 +1,107 @@
+﻿@{
+    // Set page title and extract data passed from controller
+    ViewData["Title"] = "Report Issue";
+    var categories = (string[])ViewData["Categories"];           // Available issue categories
+    var recentMessages = ViewData["RecentMessages"] as Queue<string>; // Recent engagement messages
+    var submittedCount = (int)ViewData["SubmittedCount"];        // Total submissions for progress bar
+}
+
+<!-- Issue reporting form with file upload support -->
+@using (Html.BeginForm("Report", "Issues", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <!-- Anti-forgery token to prevent CSRF attacks -->
+    @Html.AntiForgeryToken()
+    
+    <div class="container mt-4">
+        <!-- Page heading -->
+        <h2>Report an Issue</h2>
+
+        <!-- Success message display (shown after successful submission) -->
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+        
+        <!-- Error message display (shown when validation fails) -->
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        <!-- Reporter Name Field (Optional) -->
+        <div class="mb-3">
+            <label>Reporter Name</label>
+            <input name="ReporterName" class="form-control" />
+        </div>
+
+        <!-- Location Field (Required) -->
+        <div class="mb-3">
+            <label>Location</label>
+            <input name="Location" class="form-control" required />
+        </div>
+
+        <!-- Category Selection (Required) -->
+        <div class="mb-3">
+            <label>Category</label>
+            <select name="Category" class="form-select">
+                <!-- Dynamically populate options from controller data -->
+                @foreach (var c in categories)
+                {
+                    <option>@c</option>
+                }
+            </select>
+        </div>
+
+        <!-- Description Field (Required) -->
+        <div class="mb-3">
+            <label>Description</label>
+            <textarea name="Description" class="form-control" rows="5" required></textarea>
+        </div>
+
+        <!-- File Upload Field (Optional) -->
+        <div class="mb-3">
+            <label>Attach Image / Document</label>
+            <input type="file" name="file" class="form-control" />
+        </div>
+
+        <!-- Form Action Buttons -->
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a href="/" class="btn btn-secondary ms-2">Back to Main Menu</a>
+
+        <!-- Separator line -->
+        <hr />
+
+        <!-- Engagement Tracking Section -->
+        <h5>Engagement</h5>
+        <p>Reports submitted so far: <strong>@submittedCount</strong></p>
+
+        <!-- Progress Bar (1% per submission, capped at 100%) -->
+        <div class="progress" style="height:20px;">
+            @{
+                // Calculate progress percentage (1% per submission, max 100%)
+                var progress = Math.Min(100, submittedCount);
+            }
+            <div class="progress-bar" role="progressbar" style="width:@progress%">@progress%</div>
+        </div>
+
+        <!-- Recent Messages Section (Queue demonstration) -->
+        <div class="mt-3">
+            <h6>Recent encouragements</h6>
+            <ul>
+                @if (recentMessages != null)
+                {
+                    <!-- Display recent messages from the queue -->
+                    foreach (var m in recentMessages)
+                    {
+                        <li>@m</li>
+                    }
+                }
+                else
+                {
+                    <!-- Default message if no recent messages available -->
+                    <li>Be the change — report issues in your area!</li>
+                }
+            </ul>
+        </div>
+    </div>
+}

@@ -1,22 +1,86 @@
+/* ==========================================================================
+   Municipal Services Application - Custom Styles
+   ========================================================================== */
+
+/* Base font size for mobile devices */
 html {
   font-size: 14px;
 }
 
+/* Responsive font size for larger screens */
 @media (min-width: 768px) {
   html {
     font-size: 16px;
   }
 }
 
+/* Focus styles for accessibility and user interaction */
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
+/* Full height layout setup */
 html {
   position: relative;
   min-height: 100%;
 }
 
+/* Body margin to account for fixed footer */
 body {
   margin-bottom: 60px;
+}
+
+/* ==========================================================================
+   Navigation Bar Styling
+   ========================================================================== */
+
+/* Deep blue navbar theme inspired by Western Cape Government */
+.navbar-deep-blue {
+  background-color: #003366; /* Deep blue primary color */
+}
+
+/* Navigation link and brand text color */
+.navbar-deep-blue .nav-link,
+.navbar-deep-blue .navbar-brand {
+  color: #ffffff; /* White text for contrast */
+}
+
+/* Hover effects for navigation elements */
+.navbar-deep-blue .nav-link:hover,
+.navbar-deep-blue .navbar-brand:hover {
+  color: #e6f0ff; /* Light blue on hover */
+}
+
+/* ==========================================================================
+   Hero Section Styling
+   ========================================================================== */
+
+/* Hero section with gradient background and modern styling */
+.hero {
+  background: linear-gradient(135deg, #003366 0%, #00509e 100%); /* Blue gradient */
+  color: #ffffff; /* White text */
+  padding: 3rem 1rem; /* Generous padding */
+  border-radius: .5rem; /* Rounded corners */
+}
+
+/* Lead paragraph styling within hero section */
+.hero .lead {
+  color: #e6f0ff; /* Light blue for secondary text */
+}
+
+/* ==========================================================================
+   Feature Card Styling
+   ========================================================================== */
+
+/* Base styling for service feature cards */
+.feature-card {
+  border: 1px solid #e5e5e5; /* Subtle border */
+  border-radius: .5rem; /* Rounded corners */
+  transition: box-shadow .2s ease, transform .2s ease; /* Smooth transitions */
+}
+
+/* Hover effect for feature cards */
+.feature-card:hover {
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,.15); /* Elevated shadow */
+  transform: translateY(-2px); /* Slight upward movement */
 }

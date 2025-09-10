@@ -1,0 +1,24 @@
+[
+  {
+    "Id": "253e94e6-69e6-4d40-85c7-e97694c3c744",
+    "ReportedAt": "2025-09-10T16:00:35.2606599Z",
+    "ReporterName": "Mika Ryklief",
+    "Location": "Cape Town, Edgemead",
+    "Category": "Roads",
+    "Description": "Really bad roads",
+    "AttachmentPath": null,
+    "EngagementPointsAwarded": 10,
+    "Status": "Submitted"
+  },
+  {
+    "Id": "80bdb2c8-5014-44c1-b0d2-e9361c3ffad3",
+    "ReportedAt": "2025-09-10T16:08:25.2045835Z",
+    "ReporterName": "Jacob Zuma",
+    "Location": "28 High Road, Johannesburg",
+    "Category": "Sanitation",
+    "Description": "My gold toilet hasn\u0027t arrived yet!!!!",
+    "AttachmentPath": "/uploads/015d3b26-edf2-4787-8b7c-08377640af8f_classic-gold-toilet-new-4.jpg",
+    "EngagementPointsAwarded": 10,
+    "Status": "Submitted"
+  }
+]
