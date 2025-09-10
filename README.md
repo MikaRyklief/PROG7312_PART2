@@ -12,7 +12,7 @@ A web-based municipal services platform built with ASP.NET Core MVC that allows 
 
 ## Technology Stack
 
-- **Backend**: ASP.NET Core 6.0 MVC
+- **Backend**: ASP.NET Core 8.0 MVC
 - **Frontend**: Bootstrap 5, HTML5, CSS3, JavaScript
 - **Data Storage**: Custom linked list implementation with JSON persistence
 - **File Storage**: Local file system for uploads
@@ -64,15 +64,15 @@ PROG7312_Part1_POE_ST10318273/
 ## Getting Started
 
 ### Prerequisites
-- .NET 6.0 SDK or later
-- Visual Studio 2022 or VS Code
+- .NET 8.0 SDK 
+- Visual Studio 2022 
 - Web browser
 
 ### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone <https://github.com/MikaRyklief/PROG7312_Part1_POE_ST10318273.git>
    cd PROG7312_Part1_POE_ST10318273
    ```
 
@@ -94,7 +94,6 @@ PROG7312_Part1_POE_ST10318273/
 The application uses the following configuration:
 - **Data Storage**: Issues are persisted to `Data/issues.json`
 - **File Uploads**: Stored in `wwwroot/uploads/`
-- **Logo**: Place your logo file at `wwwroot/logo.svg`
 
 ## Usage
 
@@ -179,7 +178,6 @@ The application uses a deep blue color scheme inspired by the Western Cape Gover
 - Email notifications for issue updates
 - Admin dashboard for issue management
 - Database integration (SQL Server/PostgreSQL)
-- API endpoints for mobile applications
 
 ## Contributing
 
@@ -196,8 +194,6 @@ This project is part of PROG7312 coursework and is for educational purposes.
 
 ## Contact
 
-For questions or support, please contact the development team.
+For questions or support, please contact me st10318273@vcconnect.edu.za.
 
 ---
-
-**Note**: This application demonstrates the use of data structures in a real-world web application context. The linked list and queue implementations are simplified for educational purposes and may not be suitable for production use at scale.
