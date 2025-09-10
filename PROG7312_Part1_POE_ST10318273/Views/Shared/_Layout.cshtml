@@ -1,53 +1,39 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Standard HTML5 meta tags for character encoding and responsive design -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- Dynamic page title - combines view-specific title with application name -->
+
     <title>@ViewData["Title"] - Municipal Services Application</title>
-    
-    <!-- Bootstrap CSS framework for responsive design and styling -->
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    
-    <!-- Custom application styles -->
+
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    
-    <!-- Scoped styles for this application -->
+
     <link rel="stylesheet" href="~/PROG7312_Part1_POE_ST10318273.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <!-- Main header section with navigation -->
     <header>
-        <!-- Bootstrap navbar with deep blue theme and responsive collapse -->
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark navbar-deep-blue border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <!-- Brand logo and application name - links to home page -->
                 <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
-                    <!-- Logo image with responsive sizing -->
                     <img src="~/logo.svg" alt="Western Cape Government" class="me-2" style="height:32px;width:auto;" />
                     <span>Municipal Services Application</span>
                 </a>
-                
-                <!-- Mobile menu toggle button for responsive navigation -->
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                
-                <!-- Navigation menu - right-aligned with responsive collapse -->
+
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
                     <ul class="navbar-nav ms-auto">
-                        <!-- Home page navigation link -->
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <!-- Issue reporting page navigation link -->
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Issues" asp-action="Report">Report Issue</a>
                         </li>
-                        <!-- Privacy policy page navigation link -->
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
@@ -56,34 +42,25 @@
             </div>
         </nav>
     </header>
-    
-    <!-- Main content area with responsive container -->
+
     <div class="container">
-        <!-- Main content section where individual page content is rendered -->
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <!-- Footer section with copyright and privacy link -->
     <footer class="border-top footer text-muted">
         <div class="container">
-            <!-- Copyright notice and privacy policy link -->
             &copy; 2025 - PROG7312_Part1_POE_ST10318273 - <a class="link-secondary" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    
-    <!-- JavaScript libraries for enhanced functionality -->
-    <!-- jQuery library for DOM manipulation and AJAX -->
+ 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    
-    <!-- Bootstrap JavaScript for interactive components -->
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Custom application JavaScript -->
+
     <script src="~/js/site.js" asp-append-version="true"></script>
-    
-    <!-- Optional scripts section for page-specific JavaScript -->
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
