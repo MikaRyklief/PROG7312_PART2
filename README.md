@@ -188,9 +188,9 @@ The application uses a deep blue color scheme inspired by the Western Cape Gover
 5. Test your changes
 6. Submit a pull request
 
-## License
+## YouTube
 
-This project is part of PROG7312 coursework and is for educational purposes.
+https://www.youtube.com/watch?v=OlHR4GP8f0o
 
 ## Contact
 
