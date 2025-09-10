@@ -8,39 +8,20 @@ using System.Threading.Tasks;
 
 namespace PROG7312_Part1_POE_ST10318273.Data
 {
-    /// <summary>
-    /// Simple node class for the custom linked list implementation.
-    /// Each node contains an Issue object and a reference to the next node.
-    /// This demonstrates the fundamental structure of a linked list data structure.
-    /// </summary>
+
     internal class Node
     {
-        /// <summary>
-        /// The Issue object stored in this node.
-        /// </summary>
+
         public Issue Value { get; set; }
-        
-        /// <summary>
-        /// Reference to the next node in the linked list.
-        /// Null if this is the last node in the list.
-        /// </summary>
+     
         public Node Next { get; set; }
-        
-        /// <summary>
-        /// Initializes a new node with the specified issue value.
-        /// </summary>
-        /// <param name="value">The issue to store in this node</param>
+
         public Node(Issue value) => Value = value;
     }
 
-    /// <summary>
-    /// Repository implementation using a custom linked list for data storage.
-    /// This class demonstrates the use of linked lists and queues as data structures
-    /// for managing municipal issue reports. It provides persistence through JSON serialization.
-    /// </summary>
     public class LinkedListIssueRepository : IIssueRepository
     {
-        // Head node of the linked list - entry point for traversal
+        // Head node of the linked list, entry point for traversal
         private Node head;
         
         // Counter to track the number of issues in the repository
@@ -49,28 +30,13 @@ namespace PROG7312_Part1_POE_ST10318273.Data
         // File path for persisting data to disk
         private readonly string persistenceFile;
 
-        /// <summary>
-        /// Queue for storing recent engagement messages (FIFO data structure).
-        /// This demonstrates the use of Queue<T> for managing chronological message history.
-        /// Messages are automatically dequeued when the limit is exceeded.
-        /// </summary>
         public Queue<string> RecentEngagementMessages { get; } = new Queue<string>();
 
-        /// <summary>
-        /// Initializes a new instance of the LinkedListIssueRepository.
-        /// </summary>
-        /// <param name="persistenceFilePath">Path to the JSON file for data persistence</param>
         public LinkedListIssueRepository(string persistenceFilePath)
         {
             persistenceFile = persistenceFilePath;
         }
 
-        /// <summary>
-        /// Adds a new issue to the linked list repository.
-        /// This method demonstrates linked list traversal and node insertion at the tail.
-        /// </summary>
-        /// <param name="issue">The issue to be added to the repository</param>
-        /// <returns>Task representing the asynchronous operation</returns>
         public Task AddAsync(Issue issue)
         {
             // Create a new node for the issue
@@ -82,13 +48,11 @@ namespace PROG7312_Part1_POE_ST10318273.Data
             else
             {
                 // Traverse to the end of the list to append the new node
-                // This demonstrates linked list traversal
                 var cur = head;
                 while (cur.Next != null) cur = cur.Next;
                 cur.Next = node;
             }
-            
-            // Increment the counter
+
             count++;
             
             // Add engagement message to the queue for user feedback
@@ -97,11 +61,6 @@ namespace PROG7312_Part1_POE_ST10318273.Data
             return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Adds a message to the engagement queue and maintains size limit.
-        /// This method demonstrates queue operations (enqueue/dequeue) and size management.
-        /// </summary>
-        /// <param name="msg">The message to add to the queue</param>
         private void EnqueueEngagementMessage(string msg)
         {
             // Add message to the end of the queue
@@ -112,12 +71,6 @@ namespace PROG7312_Part1_POE_ST10318273.Data
                 RecentEngagementMessages.Dequeue();
         }
 
-        /// <summary>
-        /// Retrieves a specific issue by its unique identifier.
-        /// This method demonstrates linear search through a linked list.
-        /// </summary>
-        /// <param name="id">The unique identifier of the issue to find</param>
-        /// <returns>Task containing the issue if found, null otherwise</returns>
         public Task<Issue> GetAsync(Guid id)
         {
             // Start traversal from the head node
@@ -138,14 +91,9 @@ namespace PROG7312_Part1_POE_ST10318273.Data
             return Task.FromResult<Issue>(null);
         }
 
-        /// <summary>
-        /// Retrieves all issues from the repository.
-        /// This method demonstrates linked list traversal and collection building.
-        /// </summary>
-        /// <returns>Task containing a collection of all issues</returns>
         public Task<IEnumerable<Issue>> GetAllAsync()
         {
-            // Create a temporary list for enumeration (not used for storage)
+            // Create a temporary list for enumeration 
             var list = new List<Issue>();
             
             // Traverse the entire linked list
@@ -160,18 +108,8 @@ namespace PROG7312_Part1_POE_ST10318273.Data
             return Task.FromResult<IEnumerable<Issue>>(list);
         }
 
-        /// <summary>
-        /// Gets the total count of issues in the repository.
-        /// This is used for progress tracking and statistics.
-        /// </summary>
-        /// <returns>Task containing the count of issues</returns>
         public Task<int> CountAsync() => Task.FromResult(count);
 
-        /// <summary>
-        /// Persists all repository data to disk as JSON.
-        /// This method demonstrates file I/O operations and JSON serialization.
-        /// </summary>
-        /// <returns>Task representing the asynchronous operation</returns>
         public async Task SaveToDiskAsync()
         {
             // Get all issues from the repository
@@ -180,18 +118,13 @@ namespace PROG7312_Part1_POE_ST10318273.Data
             // Ensure the directory exists
             Directory.CreateDirectory(Path.GetDirectoryName(persistenceFile));
             
-            // Serialize to JSON with pretty printing
+            // Serialize to JSON 
             var json = JsonSerializer.Serialize(all, new JsonSerializerOptions { WriteIndented = true });
             
             // Write to file asynchronously
             await File.WriteAllTextAsync(persistenceFile, json);
         }
 
-        /// <summary>
-        /// Loads persisted data from disk and rebuilds the linked list.
-        /// This method demonstrates JSON deserialization and data restoration.
-        /// </summary>
-        /// <returns>Task representing the asynchronous operation</returns>
         public async Task LoadFromDiskAsync()
         {
             // Check if the persistence file exists
