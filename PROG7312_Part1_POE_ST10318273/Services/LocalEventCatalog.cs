@@ -9,27 +9,15 @@ namespace PROG7312_Part1_POE_ST10318273.Services
     // Stores and manages all events using efficient data structures.
     public class LocalEventCatalog
     {
-        // Stores events by date for quick chronological access.
-        private readonly SortedDictionary<DateOnly, List<LocalEvent>> _eventsByDate = new();
 
         // Stores events by category in sorted order.
         private readonly SortedDictionary<string, SortedSet<LocalEvent>> _eventsByCategory
             = new(StringComparer.OrdinalIgnoreCase);
 
-        // Keeps unique category names.
-        private readonly HashSet<string> _categorySet = new(StringComparer.OrdinalIgnoreCase);
 
-        // Stores recent search records (FIFO order).
-        private readonly Queue<EventSearchRecord> _recentSearches = new();
 
-        // Stores announcements with latest on top (LIFO order).
-        private readonly Stack<LocalEvent> _announcementStack = new();
 
-        // Tracks how often categories are searched (used for recommendations).
-        private readonly Dictionary<string, int> _searchFrequency = new(StringComparer.OrdinalIgnoreCase);
 
-        // Compares events by start date and title.
-        private readonly LocalEventStartDateComparer _eventComparer = new();
 
         // Constructor seeds initial sample events.
         public LocalEventCatalog()
@@ -37,7 +25,6 @@ namespace PROG7312_Part1_POE_ST10318273.Services
             SeedSampleEvents();
         }
 
-        // Returns all upcoming events in chronological order.
         public IEnumerable<LocalEvent> GetUpcomingEvents()
         {
             foreach (var bucket in _eventsByDate)
@@ -49,19 +36,15 @@ namespace PROG7312_Part1_POE_ST10318273.Services
             }
         }
 
-        // Returns announcements (latest first).
         public IReadOnlyCollection<LocalEvent> GetAnnouncements()
             => _announcementStack.ToList();
 
-        // Returns sorted list of available categories.
         public IReadOnlyCollection<string> GetCategories()
             => _categorySet.OrderBy(c => c, StringComparer.OrdinalIgnoreCase).ToArray();
 
-        // Returns recent searches (latest first).
         public IReadOnlyCollection<EventSearchRecord> GetRecentSearches()
             => _recentSearches.Reverse().ToArray();
 
-        // Searches for events by category and/or date.
         public IReadOnlyCollection<LocalEvent> Search(string? category, DateOnly? date)
         {
             RecordSearch(category, date);
@@ -87,10 +70,12 @@ namespace PROG7312_Part1_POE_ST10318273.Services
             if (hasDateFilter &&
                 _eventsByDate.TryGetValue(date!.Value, out var dateList))
             {
-                if (resultSet.Count == 0)
                     resultSet.UnionWith(dateList);
+                }
                 else
+                {
                     resultSet.IntersectWith(dateList);
+                }
             }
             else if (hasDateFilter)
             {
@@ -100,13 +85,14 @@ namespace PROG7312_Part1_POE_ST10318273.Services
             return resultSet.OrderBy(e => e.StartDate).ToArray();
         }
 
-        // Builds event recommendations based on search history.
         public IReadOnlyCollection<LocalEvent> GetRecommendations()
         {
             var recommendations = new List<LocalEvent>();
 
             if (_searchFrequency.Count == 0)
+            {
                 return GetUpcomingEvents().Take(3).ToArray();
+            }
 
             var queue = new PriorityQueue<LocalEvent, int>();
             var seen = new HashSet<Guid>();
@@ -115,12 +101,13 @@ namespace PROG7312_Part1_POE_ST10318273.Services
             foreach (var entry in _searchFrequency)
             {
                 if (!_eventsByCategory.TryGetValue(entry.Key, out var candidates))
+                {
                     continue;
+                }
 
                 foreach (var candidate in candidates)
                 {
                     var priority = CalculatePriority(candidate, entry.Value);
-                    queue.Enqueue(candidate, -priority); // invert for highest priority first
                 }
             }
 
@@ -129,19 +116,16 @@ namespace PROG7312_Part1_POE_ST10318273.Services
             {
                 var next = queue.Dequeue();
                 if (seen.Add(next.Id))
+                {
                     recommendations.Add(next);
+                }
             }
 
-            return recommendations.Count == 0
-                ? GetUpcomingEvents().Take(3).ToArray()
-                : recommendations;
-        }
+            }
 
-        // Calculates recommendation priority score.
         private int CalculatePriority(LocalEvent localEvent, int searchFrequency)
         {
             var daysAway = (int)Math.Max(0, (localEvent.StartDate.Date - DateTime.Today).TotalDays);
-            var freshnessScore = Math.Max(0, 45 - daysAway);
 
             var tagMatches = 0;
             if (_recentSearches.Count > 0 && localEvent.Tags.Count > 0)
@@ -150,13 +134,17 @@ namespace PROG7312_Part1_POE_ST10318273.Services
 
                 if (!string.IsNullOrWhiteSpace(lastSearch.Category) &&
                     localEvent.Tags.Any(tag => tag.Equals(lastSearch.Category, StringComparison.OrdinalIgnoreCase)))
+                {
                     tagMatches += 5;
+                }
 
                 if (lastSearch.Date.HasValue)
                 {
                     var dateTag = lastSearch.Date.Value.ToString("yyyy-MM", CultureInfo.InvariantCulture);
                     if (localEvent.Tags.Any(tag => tag.Equals(dateTag, StringComparison.OrdinalIgnoreCase)))
+                    {
                         tagMatches += 3;
+                    }
                 }
             }
 
@@ -171,15 +159,21 @@ namespace PROG7312_Part1_POE_ST10318273.Services
 
             // Keep queue size to last 8 searches.
             if (_recentSearches.Count > 8)
+            {
                 _recentSearches.Dequeue();
+            }
 
             // Update search frequency for category.
             if (!string.IsNullOrWhiteSpace(category))
             {
                 if (_searchFrequency.TryGetValue(category!, out var existing))
+                {
                     _searchFrequency[category!] = existing + 1;
+                }
                 else
+                {
                     _searchFrequency[category!] = 1;
+                }
             }
         }
 
@@ -401,7 +395,9 @@ namespace PROG7312_Part1_POE_ST10318273.Services
             _categorySet.Add(localEvent.Category);
 
             if (localEvent.IsAnnouncement)
+            {
                 _announcementStack.Push(localEvent);
+            }
         }
 
         // Compares events by start date and title, used for sorting.
@@ -409,23 +405,16 @@ namespace PROG7312_Part1_POE_ST10318273.Services
         {
             public int Compare(LocalEvent? x, LocalEvent? y)
             {
-                if (ReferenceEquals(x, y)) return 0;
-                if (x is null) return -1;
-                if (y is null) return 1;
 
                 var compare = DateTime.Compare(x.StartDate, y.StartDate);
-                if (compare != 0) return compare;
 
                 return string.Compare(x.Title, y.Title, StringComparison.OrdinalIgnoreCase);
             }
 
             public bool Equals(LocalEvent? x, LocalEvent? y)
-                => !(x is null || y is null) && x.Id == y.Id;
 
-            public int GetHashCode(LocalEvent obj) => obj.Id.GetHashCode();
         }
     }
 
-    // Represents one search record stored in a queue.
     public record struct EventSearchRecord(string? Category, DateOnly? Date);
 }

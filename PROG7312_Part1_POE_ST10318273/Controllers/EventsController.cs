@@ -55,7 +55,6 @@ namespace PROG7312_Part1_POE_ST10318273.Controllers
 
             // Perform search only if filters exist, and then apply sorting
             var searchResults = hasFilters
-                ? ApplySort(_catalog.Search(category, selectedDate), selectedSort).ToArray()
                 : Array.Empty<LocalEvent>();
 
             // Apply sorting to upcoming events
@@ -64,9 +63,6 @@ namespace PROG7312_Part1_POE_ST10318273.Controllers
             var viewModel = new LocalEventsViewModel
             {
                 Categories = _catalog.GetCategories(),
-
-                UpcomingEvents = upcomingEvents,
-
                 Announcements = _catalog.GetAnnouncements().ToArray(),
 
                 SearchResults = searchResults,
