@@ -3,55 +3,78 @@
 }
 
 <div class="container my-4">
-    <div class="hero">
+    <!-- Hero Section -->
+    <div class="hero bg-primary text-white p-5 rounded shadow-sm">
         <div class="row align-items-center">
             <div class="col-md-8">
                 <h1 class="mb-3">Welcome to Municipal Services</h1>
-  
-                <p class="lead mb-4">Access key services quickly: report issues, track requests, and find helpful information.</p>
+                <p class="lead mb-4">
+                    Access key services quickly: report issues, track requests, and stay informed about your community.
+                </p>
 
                 <a class="btn btn-light me-2" href="/Issues/Report">Report an Issue</a>
-  
-                <a class="btn btn-outline-light" href="#services">Explore services</a>
+                <a class="btn btn-outline-light" href="#services">Explore Services</a>
             </div>
 
             <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                <img src="~/logo.svg" alt="Western Cape Government" style="height:64px;width:auto;" />
+                <img src="~/logo.svg" alt="Municipal Logo" style="height:64px;width:auto;" />
             </div>
         </div>
     </div>
 
-    <section id="services" class="mt-4">
+    <!-- Services Section -->
+    <section id="services" class="mt-5">
+        <h2 class="mb-4 text-center">Our Core Services</h2>
         <div class="row g-3">
             <div class="col-md-4">
-                <div class="p-3 feature-card h-100">
+                <div class="p-3 border rounded h-100 shadow-sm">
                     <h5 class="mb-2">Report Issues</h5>
-
                     <p class="mb-3">Log municipal issues like water leaks, potholes, or power faults.</p>
-   
-                    <a class="btn btn-outline-primary" href="/Issues/Report">Start report</a>
+                    <a class="btn btn-outline-primary" href="/Issues/Report">Start Report</a>
                 </div>
             </div>
 
             <div class="col-md-4">
-                <div class="p-3 feature-card h-100">
+                <div class="p-3 border rounded h-100 shadow-sm">
                     <h5 class="mb-2">Local Events</h5>
-     
-                    <p class="mb-3">Stay informed about community events and announcements.</p>
-
-                    <a class="btn btn-outline-primary" href="/Events">View events</a>
+                    <p class="mb-3">Stay informed about community events and public announcements.</p>
+                    <a class="btn btn-outline-primary" href="/Events">View Events</a>
                 </div>
             </div>
-       
+
             <div class="col-md-4">
-                <div class="p-3 feature-card h-100">
+                <div class="p-3 border rounded h-100 shadow-sm">
                     <h5 class="mb-2">Request Status</h5>
-       
                     <p class="mb-3">Track the progress of your submitted service requests.</p>
-                 
-                    <button class="btn btn-outline-primary" disabled>Coming soon</button>
+                    <button class="btn btn-outline-primary" disabled>Coming Soon</button>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Announcements Section -->
+    <section class="mt-5">
+        <h2 class="mb-3 text-center">Latest Announcements</h2>
+        <div class="list-group shadow-sm">
+            <a href="#" class="list-group-item list-group-item-action">
+                🚧 Water Service Interruption – Northdale (Tomorrow, 6:00 AM)
+            </a>
+            <a href="#" class="list-group-item list-group-item-action">
+                🛣️ Road Maintenance – Ward 12 (Next Week)
+            </a>
+            <a href="#" class="list-group-item list-group-item-action">
+                🩺 Free Community Health Screening – Newtown Clinic (Saturday)
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-5 py-4 bg-light text-center border-top rounded-top">
+        <p class="mb-1">© 2025 City of Cape Town | Municipal Services Portal</p>
+        <p class="small mb-0">
+            Contact us:
+            <a href="mailto:support@capetown.gov.za">support@capetown.gov.za</a> |
+            Call: 0860 103 089
+        </p>
+    </footer>
 </div>
