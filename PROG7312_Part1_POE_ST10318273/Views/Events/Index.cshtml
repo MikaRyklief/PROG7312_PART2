@@ -24,6 +24,7 @@
                                 }
                             </select>
                         </div>
+                        <div class="col-md-3">
                             <label for="date" class="form-label">Date</label>
                             <input id="date" name="date" type="date" value="@dateValue" class="form-control" />
                         </div>
@@ -137,9 +138,9 @@
                             {
                                 var chip = string.Join(" • ", new[]
                                 {
-                                    string.IsNullOrWhiteSpace(search.Category) ? null : search.Category,
-                                    search.Date.HasValue ? search.Date.Value.ToString("d MMM yyyy") : null
-                                }.Where(value => value != null));
+                                                string.IsNullOrWhiteSpace(search.Category) ? null : search.Category,
+                                                search.Date.HasValue ? search.Date.Value.ToString("d MMM yyyy") : null
+                                                }.Where(value => value != null));
                                 <li class="recent-search-item">@chip</li>
                             }
                         </ul>
@@ -149,4 +150,3 @@
         </div>
     </div>
 </div>
-
