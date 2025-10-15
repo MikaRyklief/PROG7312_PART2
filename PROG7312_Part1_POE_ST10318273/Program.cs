@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PROG7312_Part1_POE_ST10318273.Data;
+using PROG7312_Part1_POE_ST10318273.Services;
 using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,7 @@ var repo = new LinkedListIssueRepository(dataPath);
 await repo.LoadFromDiskAsync();
 
 builder.Services.AddSingleton<IIssueRepository>(repo);
+builder.Services.AddSingleton<LocalEventCatalog>();
 
 var app = builder.Build();
 

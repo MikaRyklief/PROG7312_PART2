@@ -1,0 +1,152 @@
+﻿@using System.Linq
+@model LocalEventsViewModel
+@{
+    ViewData["Title"] = "Local Events & Announcements";
+    string dateValue = Model.SelectedDate?.ToString("yyyy-MM-dd") ?? string.Empty;
+}
+
+<div class="container my-4">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3">Discover what's happening nearby</h2>
+                    <p class="text-muted mb-4">Use the filters below to find relevant events or announcements by category and date. Your recent searches help us recommend items tailored to your interests.</p>
+
+                    <form method="get" class="row g-3 align-items-end">
+                        <div class="col-md-4">
+                            <label for="category" class="form-label">Category</label>
+                            <select id="category" name="category" class="form-select">
+                                <option value="">All categories</option>
+                                @foreach (var category in Model.Categories)
+                                {
+                                    <option value="@category" selected="@(Model.SelectedCategory == category ? "selected" : null)">@category</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="date" class="form-label">Date</label>
+                            <input id="date" name="date" type="date" value="@dateValue" class="form-control" />
+                        </div>  
+                        <div class="col-md-3">
+                            <label for="sortOrder" class="form-label">Sort by</label>
+                            <select id="sortOrder" name="sortOrder" class="form-select" onchange="this.form.submit()">
+                                @foreach (var option in Model.SortOptions)
+                                {
+                                    <option value="@option.Value" selected="@(Model.SelectedSortOrder == option.Value ? "selected" : null)">@option.Label</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-grid">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <section aria-labelledby="search-results" class="mb-5">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 id="search-results" class="h5 mb-0">@((Model.HasSearched ? "Search results" : "Upcoming highlights"))</h3>
+                    @if (Model.HasSearched)
+                    {
+                        <a class="small" asp-action="Index">Clear filters</a>
+                    }
+                </div>
+
+                <div class="row g-3">
+                    @if (Model.HasSearched && !Model.SearchResults.Any())
+                    {
+                        <div class="col-12">
+                            <div class="alert alert-info mb-0" role="alert">
+                                No events matched your filters. Try selecting a different category or date.
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        var eventsToRender = Model.HasSearched ? Model.SearchResults : Model.UpcomingEvents;
+                        foreach (var item in eventsToRender)
+                        {
+                            <div class="col-md-6">
+                                <article class="event-card h-100">
+                                    <header class="event-card__header">
+                                        <span class="badge bg-light text-dark border">@item.Category</span>
+                                        <h4 class="event-card__title">@item.Title</h4>
+                                        <p class="event-card__date">@item.StartDate.ToString("dddd, d MMMM yyyy • HH:mm")</p>
+                                    </header>
+                                    <p class="event-card__description">@item.Description</p>
+                                    <footer class="event-card__footer">
+                                        <span class="event-card__location">@item.Location</span>
+                                        @if (item.EndDate.HasValue)
+                                        {
+                                            <span class="event-card__duration text-muted">Ends @item.EndDate.Value.ToString("HH:mm")</span>
+                                        }
+                                    </footer>
+                                </article>
+                            </div>
+                        }
+                    }
+                </div>
+            </section>
+        </div>
+
+        <div class="col-lg-4">
+            <aside class="mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-4">
+                        <h3 class="h6 text-uppercase text-muted mb-3">Priority announcements</h3>
+                        @foreach (var announcement in Model.Announcements)
+                        {
+                            <div class="announcement-item">
+                                <strong>@announcement.Title</strong>
+                                <div class="small text-muted">@announcement.StartDate.ToString("d MMM yyyy • HH:mm")</div>
+                                <div class="small">@announcement.Description</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </aside>
+
+            <section class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-4">
+                    <h3 class="h6 text-uppercase text-muted mb-3">Recommended for you</h3>
+                    @foreach (var recommendation in Model.Recommendations)
+                    {
+                        <div class="recommendation-item">
+                            <div class="d-flex justify-content-between">
+                                <strong>@recommendation.Title</strong>
+                                <span class="badge bg-primary-subtle text-primary">@recommendation.Category</span>
+                            </div>
+                            <div class="small text-muted">@recommendation.StartDate.ToString("d MMM yyyy")</div>
+                            <div class="small">@recommendation.Location</div>
+                        </div>
+                    }
+                </div>
+            </section>
+
+            <section class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h3 class="h6 text-uppercase text-muted mb-3">Recent searches</h3>
+                    @if (!Model.RecentSearches.Any())
+                    {
+                        <p class="small text-muted mb-0">Search for events to build a personalised history.</p>
+                    }
+                    else
+                    {
+                        <ul class="list-unstyled mb-0">
+                            @foreach (var search in Model.RecentSearches)
+                            {
+                                var chip = string.Join(" • ", new[]
+                                {
+                                                string.IsNullOrWhiteSpace(search.Category) ? null : search.Category,
+                                                search.Date.HasValue ? search.Date.Value.ToString("d MMM yyyy") : null
+                                                }.Where(value => value != null));
+                                <li class="recent-search-item">@chip</li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </section>
+        </div>
+    </div>
+</div>

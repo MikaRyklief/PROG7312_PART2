@@ -20,5 +20,16 @@
     "AttachmentPath": "/uploads/015d3b26-edf2-4787-8b7c-08377640af8f_classic-gold-toilet-new-4.jpg",
     "EngagementPointsAwarded": 10,
     "Status": "Submitted"
+  },
+  {
+    "Id": "b9a40004-f491-47c6-bf17-5b5829f28ca3",
+    "ReportedAt": "2025-10-13T14:19:38.873887Z",
+    "ReporterName": "Jacob Zuma",
+    "Location": "28 High Road, Johannesburg",
+    "Category": "Roads",
+    "Description": "Potholes!",
+    "AttachmentPath": null,
+    "EngagementPointsAwarded": 10,
+    "Status": "Submitted"
   }
 ]
