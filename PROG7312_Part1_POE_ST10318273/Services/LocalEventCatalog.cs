@@ -6,44 +6,38 @@ using PROG7312_Part1_POE_ST10318273.Models;
 
 namespace PROG7312_Part1_POE_ST10318273.Services
 {
-    /// <summary>
-    /// In-memory catalogue that organises local events with a mix of advanced
-    /// data structures.  The catalogue is initialised with seed data but exposes
-    /// methods that could be used to hydrate from persistent storage in future
-    /// iterations of the project.
-    /// </summary>
+    // Stores and manages all events using efficient data structures.
     public class LocalEventCatalog
     {
-        private readonly SortedDictionary<DateOnly, List<LocalEvent>> _eventsByDate
-            = new();
+        // Stores events by date for quick chronological access.
+        private readonly SortedDictionary<DateOnly, List<LocalEvent>> _eventsByDate = new();
 
+        // Stores events by category in sorted order.
         private readonly SortedDictionary<string, SortedSet<LocalEvent>> _eventsByCategory
             = new(StringComparer.OrdinalIgnoreCase);
 
-        private readonly HashSet<string> _categorySet
-            = new(StringComparer.OrdinalIgnoreCase);
+        // Keeps unique category names.
+        private readonly HashSet<string> _categorySet = new(StringComparer.OrdinalIgnoreCase);
 
-        private readonly Queue<EventSearchRecord> _recentSearches
-            = new();
+        // Stores recent search records (FIFO order).
+        private readonly Queue<EventSearchRecord> _recentSearches = new();
 
-        private readonly Stack<LocalEvent> _announcementStack
-            = new();
+        // Stores announcements with latest on top (LIFO order).
+        private readonly Stack<LocalEvent> _announcementStack = new();
 
-        private readonly Dictionary<string, int> _searchFrequency
-            = new(StringComparer.OrdinalIgnoreCase);
+        // Tracks how often categories are searched (used for recommendations).
+        private readonly Dictionary<string, int> _searchFrequency = new(StringComparer.OrdinalIgnoreCase);
 
-        private readonly LocalEventStartDateComparer _eventComparer
-            = new();
+        // Compares events by start date and title.
+        private readonly LocalEventStartDateComparer _eventComparer = new();
 
+        // Constructor seeds initial sample events.
         public LocalEventCatalog()
         {
             SeedSampleEvents();
         }
 
-        /// <summary>
-        /// Returns a chronologically ordered enumeration of upcoming events and
-        /// announcements.
-        /// </summary>
+        // Returns all upcoming events in chronological order.
         public IEnumerable<LocalEvent> GetUpcomingEvents()
         {
             foreach (var bucket in _eventsByDate)
@@ -55,33 +49,19 @@ namespace PROG7312_Part1_POE_ST10318273.Services
             }
         }
 
-        /// <summary>
-        /// Provides the list of announcements maintained in a stack so that the
-        /// most recent priority item is surfaced first on the UI.
-        /// </summary>
+        // Returns announcements (latest first).
         public IReadOnlyCollection<LocalEvent> GetAnnouncements()
             => _announcementStack.ToList();
 
-        /// <summary>
-        /// Returns the unique set of available categories as a sorted list for
-        /// drop-down population.
-        /// </summary>
+        // Returns sorted list of available categories.
         public IReadOnlyCollection<string> GetCategories()
             => _categorySet.OrderBy(c => c, StringComparer.OrdinalIgnoreCase).ToArray();
 
-        /// <summary>
-        /// Exposes the queue of recent search records, reversed so that the
-        /// latest search appears first when rendered.
-        /// </summary>
+        // Returns recent searches (latest first).
         public IReadOnlyCollection<EventSearchRecord> GetRecentSearches()
             => _recentSearches.Reverse().ToArray();
 
-        /// <summary>
-        /// Attempts to find matching events using the advanced data structures in
-        /// this catalogue.  The method records the search in the queue, uses sets
-        /// to intersect category/date filters, and updates search frequency data
-        /// used by the recommendation engine.
-        /// </summary>
+        // Searches for events by category and/or date.
         public IReadOnlyCollection<LocalEvent> Search(string? category, DateOnly? date)
         {
             RecordSearch(category, date);
@@ -90,32 +70,27 @@ namespace PROG7312_Part1_POE_ST10318273.Services
             var hasCategoryFilter = !string.IsNullOrWhiteSpace(category);
             var hasDateFilter = date.HasValue;
 
+            // If no filters, return first few upcoming events.
             if (!hasCategoryFilter && !hasDateFilter)
             {
                 return GetUpcomingEvents().Take(6).ToArray();
             }
 
+            // Add all events from the selected category.
             if (hasCategoryFilter &&
                 _eventsByCategory.TryGetValue(category!, out var categorySet))
             {
                 resultSet.UnionWith(categorySet);
             }
 
+            // Add or intersect with events on selected date.
             if (hasDateFilter &&
                 _eventsByDate.TryGetValue(date!.Value, out var dateList))
             {
-                if (resultSet.Count == 0 && hasCategoryFilter)
-                {
+                if (resultSet.Count == 0)
                     resultSet.UnionWith(dateList);
-                }
-                else if (resultSet.Count == 0)
-                {
-                    resultSet.UnionWith(dateList);
-                }
                 else
-                {
                     resultSet.IntersectWith(dateList);
-                }
             }
             else if (hasDateFilter)
             {
@@ -125,105 +100,90 @@ namespace PROG7312_Part1_POE_ST10318273.Services
             return resultSet.OrderBy(e => e.StartDate).ToArray();
         }
 
-        /// <summary>
-        /// Builds a list of recommended events using a priority queue that ranks
-        /// matches based on category search frequency, proximity of the event date
-        /// and tag overlap with recent searches.
-        /// </summary>
+        // Builds event recommendations based on search history.
         public IReadOnlyCollection<LocalEvent> GetRecommendations()
         {
             var recommendations = new List<LocalEvent>();
 
             if (_searchFrequency.Count == 0)
-            {
                 return GetUpcomingEvents().Take(3).ToArray();
-            }
 
             var queue = new PriorityQueue<LocalEvent, int>();
             var seen = new HashSet<Guid>();
 
+            // Add candidates to the priority queue.
             foreach (var entry in _searchFrequency)
             {
                 if (!_eventsByCategory.TryGetValue(entry.Key, out var candidates))
-                {
                     continue;
-                }
 
                 foreach (var candidate in candidates)
                 {
                     var priority = CalculatePriority(candidate, entry.Value);
-                    queue.Enqueue(candidate, -priority); // invert for max-heap behaviour
+                    queue.Enqueue(candidate, -priority); // invert for highest priority first
                 }
             }
 
+            // Return top 3 recommendations.
             while (queue.Count > 0 && recommendations.Count < 3)
             {
                 var next = queue.Dequeue();
                 if (seen.Add(next.Id))
-                {
                     recommendations.Add(next);
-                }
             }
 
-            if (recommendations.Count == 0)
-            {
-                return GetUpcomingEvents().Take(3).ToArray();
-            }
-
-            return recommendations;
+            return recommendations.Count == 0
+                ? GetUpcomingEvents().Take(3).ToArray()
+                : recommendations;
         }
 
+        // Calculates recommendation priority score.
         private int CalculatePriority(LocalEvent localEvent, int searchFrequency)
         {
             var daysAway = (int)Math.Max(0, (localEvent.StartDate.Date - DateTime.Today).TotalDays);
-            var freshnessScore = Math.Max(0, 45 - daysAway); // nearer events receive higher scores
+            var freshnessScore = Math.Max(0, 45 - daysAway);
 
             var tagMatches = 0;
             if (_recentSearches.Count > 0 && localEvent.Tags.Count > 0)
             {
                 var lastSearch = _recentSearches.Last();
+
                 if (!string.IsNullOrWhiteSpace(lastSearch.Category) &&
                     localEvent.Tags.Any(tag => tag.Equals(lastSearch.Category, StringComparison.OrdinalIgnoreCase)))
-                {
                     tagMatches += 5;
-                }
 
                 if (lastSearch.Date.HasValue)
                 {
                     var dateTag = lastSearch.Date.Value.ToString("yyyy-MM", CultureInfo.InvariantCulture);
                     if (localEvent.Tags.Any(tag => tag.Equals(dateTag, StringComparison.OrdinalIgnoreCase)))
-                    {
                         tagMatches += 3;
-                    }
                 }
             }
 
             return (searchFrequency * 15) + freshnessScore + tagMatches;
         }
 
+        // Records a new search and updates history and frequency.
         private void RecordSearch(string? category, DateOnly? date)
         {
             var record = new EventSearchRecord(category, date);
             _recentSearches.Enqueue(record);
 
+            // Keep queue size to last 8 searches.
             if (_recentSearches.Count > 8)
-            {
                 _recentSearches.Dequeue();
-            }
 
+            // Update search frequency for category.
             if (!string.IsNullOrWhiteSpace(category))
             {
                 if (_searchFrequency.TryGetValue(category!, out var existing))
-                {
                     _searchFrequency[category!] = existing + 1;
-                }
                 else
-                {
                     _searchFrequency[category!] = 1;
-                }
             }
         }
 
+        // Seeds initial demo data.
         private void SeedSampleEvents()
         {
             var events = new[]
@@ -417,6 +377,7 @@ namespace PROG7312_Part1_POE_ST10318273.Services
             }
         }
 
+        // Adds an event into all relevant data structures.
         private void AddEvent(LocalEvent localEvent)
         {
             var dateKey = DateOnly.FromDateTime(localEvent.StartDate);
@@ -440,62 +401,31 @@ namespace PROG7312_Part1_POE_ST10318273.Services
             _categorySet.Add(localEvent.Category);
 
             if (localEvent.IsAnnouncement)
-            {
                 _announcementStack.Push(localEvent);
-            }
         }
 
+        // Compares events by start date and title, used for sorting.
         private sealed class LocalEventStartDateComparer : IComparer<LocalEvent>, IEqualityComparer<LocalEvent>
         {
             public int Compare(LocalEvent? x, LocalEvent? y)
             {
-                if (ReferenceEquals(x, y))
-                {
-                    return 0;
-                }
-
-                if (x is null)
-                {
-                    return -1;
-                }
-
-                if (y is null)
-                {
-                    return 1;
-                }
+                if (ReferenceEquals(x, y)) return 0;
+                if (x is null) return -1;
+                if (y is null) return 1;
 
                 var compare = DateTime.Compare(x.StartDate, y.StartDate);
-                if (compare != 0)
-                {
-                    return compare;
-                }
+                if (compare != 0) return compare;
 
                 return string.Compare(x.Title, y.Title, StringComparison.OrdinalIgnoreCase);
             }
 
             public bool Equals(LocalEvent? x, LocalEvent? y)
-            {
-                if (ReferenceEquals(x, y))
-                {
-                    return true;
-                }
+                => !(x is null || y is null) && x.Id == y.Id;
 
-                if (x is null || y is null)
-                {
-                    return false;
-                }
-
-                return x.Id == y.Id;
-            }
-
-            public int GetHashCode(LocalEvent obj)
-                => obj.Id.GetHashCode();
+            public int GetHashCode(LocalEvent obj) => obj.Id.GetHashCode();
         }
     }
 
-    /// <summary>
-    /// Immutable record describing a single search interaction.  Instances are
-    /// stored in a queue to maintain history.
-    /// </summary>
+    // Represents one search record stored in a queue.
     public record struct EventSearchRecord(string? Category, DateOnly? Date);
 }
