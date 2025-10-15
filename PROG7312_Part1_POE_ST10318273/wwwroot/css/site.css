@@ -56,5 +56,68 @@ body {
 
 .feature-card:hover {
   box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
-  transform: translateY(-2px); 
+  transform: translateY(-2px);
+}
+
+.event-card {
+  background-color: #ffffff;
+  border-radius: .75rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.05);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.event-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 .75rem 2rem rgba(0, 0, 0, 0.12);
+}
+
+.event-card__title {
+  margin-top: .75rem;
+  margin-bottom: .25rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.event-card__date {
+  font-size: .9rem;
+  color: #4f5d75;
+}
+
+.event-card__description {
+  flex-grow: 1;
+  font-size: .95rem;
+  color: #3a3f44;
+}
+
+.event-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: .85rem;
+  color: #495057;
+}
+
+.announcement-item + .announcement-item {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed rgba(0, 0, 0, 0.1);
+}
+
+.recommendation-item + .recommendation-item {
+  margin-top: .75rem;
+  padding-top: .75rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.recent-search-item {
+  padding: .35rem .5rem;
+  border-radius: .5rem;
+  background-color: #f1f5f9;
+  display: inline-block;
+  margin-bottom: .35rem;
 }
